@@ -1,0 +1,32 @@
+安装步骤：
+
+修改httpd.conf配置文件
+
+37行： ServerRoot "apache目录" （e.g. 'c:\apache24' 改为 d:\apache）
+
+217行：ServerName 服务器名称 （e.g demo.app.com or 127.0.0.1）去掉#
+
+241行： DocumentRoot 修改网站根目录地址
+
+242行：<Directory "网站根目录地址">
+
+358行：ScriptAlias /cgi-bin/ "apache目录+/cgi-bin/"
+
+374行：<Directory "apache目录+/cgi-bin/">
+
+安装启动：
+
+启动命令行管理员模式，然后cd到apache目录下运行：
+
+#安装服务
+httpd -k install
+ 
+#启动服务
+httpd -k start
+重启与卸载：
+
+#重启服务
+httpd -k restart
+ 
+#卸载服务
+httpd -k uninstall

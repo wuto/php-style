@@ -1,0 +1,466 @@
+﻿php文件打开/读取
+
+fopen()用于打开文件
+fopen()的第一个参数包含被打开的文件名，第二个参数规定打开文件的模式。如果fopen()函数未能打开指定的文件，下面的例子可以生成一段消息：
+<?php
+$myfile = fopen("webdictionary.txt", "r") or die("Unable to open file!");
+echo fread($myfile,filesize("webdictionary.txt"));
+fclose($myfile);
+?>
+
+
+fread()函数读取打开的文件
+fread()函数的第一个参数包含待读取文件的文件名，第二个参数规定待读取的最大字节数
+如下 PHP 代码把 "webdictionary.txt" 文件读至结尾：
+fread($myfile,filesize("webdictionary.txt")
+
+
+
+fcolse()函数用于关闭打开的文件
+
+注释：用完文件后把它们关闭是一个良好的编程习惯。
+fcolse($filename)
+fclose() 需要待关闭文件的名称（或者存有文件名的变量）
+fclose($myfile);
+
+
+
+fgets()函数用于从文件中读取单行
+注释：在调用fgets()后，文件指针会移动到下一行。
+
+
+
+
+
+feof()函数检查是否已到达"end-of-dile"(eof)
+feof() 对于遍历未知长度的数据很有用。
+
+下例逐行读取 "webdictionary.txt" 文件，直到 end-of-file：
+实例
+
+<?php
+$myfile = fopen("webdictionary.txt", "r") or die("Unable to open file!");
+// 输出单行直到 end-of-file
+while(!feof($myfile)) {
+  echo fgets($myfile) . "<br>";
+}
+fclose($myfile);
+?>
+
+
+
+fgetc() 函数用于从文件中读取单个字符
+注释：在调用 fgetc() 函数之后，文件指针会移动到下一个字符
+
+
+
+
+php文件创建/写入
+
+
+fopen()函数也用于创建文件。在php中创建文件所用的函数与打开文件的相同。如果用fopen()打开并不存在的文件，此函数汇创建文件，假定文件被打开为写入(w)或增加(a)。
+下面的例子创建名为"testfile.txt"的新文件。此文件将被创建于php代码相同的目录中：
+实例：$myfile=fopen("testfile.txt","w")
+
+
+
+PHP 文件权限
+
+如果您试图运行这段代码时发生错误，请检查您是否有向硬盘写入信息的 PHP 文件访问权限。
+
+
+
+
+fwritw()函数用于写入文件
+fwritw()的第一个参数包含要写入文件的文件名，第二个参数是被写的字符串。
+下面的例子把姓名写入名为"newfile.txt"的新文件中：
+<?php
+$myfile = fopen("newfile.txt", "w") or die("Unable to open file!");
+$txt = "Bill Gates\n";
+fwrite($myfile, $txt);
+$txt = "Steve Jobs\n";
+fwrite($myfile, $txt);
+fclose($myfile);
+?>
+
+
+
+php覆盖（overwriting）
+如果现在 "newfile.txt" 包含了一些数据，我们可以展示在写入已有文件时发生的的事情。所有已存在的数据会被擦除并以一个新文件开始。
+
+在下面的例子中，我们打开一个已存在的文件 "newfile.txt"，并向其中写入了一些新数据：
+实例
+
+<?php
+$myfile = fopen("newfile.txt", "w") or die("Unable to open file!");
+$txt = "Mickey Mouse\n";
+fwrite($myfile, $txt);
+$txt = "Minnie Mouse\n";
+fwrite($myfile, $txt);
+fclose($myfile);
+?>
+
+如果现在我们打开这个 "newfile.txt" 文件，Bill 和 Steve 都已消失，只剩下我们刚写入的数据：
+
+Mickey Mouse
+Minnie Mouse
+
+
+
+
+
+php文件上传
+
+
+
+
+创建一个文件上传表单
+
+允许用户从表单上传文件是非常有用的。
+
+请看下面这个供上传文件的 HTML 表单：
+
+<html>
+<body>
+
+<form action="upload_file.php" method="post"
+enctype="multipart/form-data">
+<label for="file">Filename:</label>
+<input type="file" name="file" id="file" /> 
+<br />
+<input type="submit" name="submit" value="Submit" />
+</form>
+
+</body>
+</html>
+
+请留意如下有关此表单的信息：
+
+<form> 标签的 enctype 属性规定了在提交表单时要使用哪种内容类型。在表单需要二进制数据时，比如文件内容，请使用 "multipart/form-data"。
+
+<input> 标签的 type="file" 属性规定了应该把输入作为文件来处理。举例来说，当在浏览器中预览时，会看到输入框旁边有一个浏览按钮。
+
+注释：允许用户上传文件是一个巨大的安全风险。请仅仅允许可信的用户执行文件上传操作。
+
+
+创建上传脚本
+"upload_file.php" 文件含有供上传文件的代码：
+
+<?php
+if ($_FILES["file"]["error"] > 0)
+  {
+  echo "Error: " . $_FILES["file"]["error"] . "<br />";
+  }
+else
+  {
+  echo "Upload: " . $_FILES["file"]["name"] . "<br />";
+  echo "Type: " . $_FILES["file"]["type"] . "<br />";
+  echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+  echo "Stored in: " . $_FILES["file"]["tmp_name"];
+  }
+?>
+
+通过使用 PHP 的全局数组 $_FILES，你可以从客户计算机向远程服务器上传文件。
+
+第一个参数是表单的 input name，第二个下标可以是 "name", "type", "size", "tmp_name" 或 "error"。就像这样：
+
+    $_FILES["file"]["name"] - 被上传文件的名称
+    $_FILES["file"]["type"] - 被上传文件的类型
+    $_FILES["file"]["size"] - 被上传文件的大小，以字节计
+    $_FILES["file"]["tmp_name"] - 存储在服务器的文件的临时副本的名称
+    $_FILES["file"]["error"] - 由文件上传导致的错误代码
+
+这是一种非常简单文件上传方式。基于安全方面的考虑，您应当增加有关什么用户有权上传文件的限制。
+上传限制
+
+在这个脚本中，我们增加了对文件上传的限制。用户只能上传 .gif 或 .jpeg 文件，文件大小必须小于 20 kb：
+
+<?php
+
+if ((($_FILES["file"]["type"] == "image/gif")
+|| ($_FILES["file"]["type"] == "image/jpeg")
+|| ($_FILES["file"]["type"] == "image/pjpeg"))
+&& ($_FILES["file"]["size"] < 20000))
+  {
+  if ($_FILES["file"]["error"] > 0)
+    {
+    echo "Error: " . $_FILES["file"]["error"] . "<br />";
+    }
+  else
+    {
+    echo "Upload: " . $_FILES["file"]["name"] . "<br />";
+    echo "Type: " . $_FILES["file"]["type"] . "<br />";
+    echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+    echo "Stored in: " . $_FILES["file"]["tmp_name"];
+    }
+  }
+else
+  {
+  echo "Invalid file";
+  }
+
+?>
+
+注释：对于 IE，识别 jpg 文件的类型必须是 pjpeg，对于 FireFox，必须是 jpeg。
+保存被上传的文件
+
+上面的例子在服务器的 PHP 临时文件夹创建了一个被上传文件的临时副本。
+
+这个临时的复制文件会在脚本结束时消失。要保存被上传的文件，我们需要把它拷贝到另外的位置：
+
+<?php
+if ((($_FILES["file"]["type"] == "image/gif")
+|| ($_FILES["file"]["type"] == "image/jpeg")
+|| ($_FILES["file"]["type"] == "image/pjpeg"))
+&& ($_FILES["file"]["size"] < 20000))
+  {
+  if ($_FILES["file"]["error"] > 0)
+    {
+    echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
+    }
+  else
+    {
+    echo "Upload: " . $_FILES["file"]["name"] . "<br />";
+    echo "Type: " . $_FILES["file"]["type"] . "<br />";
+    echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+    echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br />";
+
+    if (file_exists("upload/" . $_FILES["file"]["name"]))
+      {
+      echo $_FILES["file"]["name"] . " already exists. ";
+      }
+    else
+      {
+      move_uploaded_file($_FILES["file"]["tmp_name"],
+      "upload/" . $_FILES["file"]["name"]);
+      echo "Stored in: " . "upload/" . $_FILES["file"]["name"];
+      }
+    }
+  }
+else
+  {
+  echo "Invalid file";
+  }
+?>
+
+上面的脚本检测了是否已存在此文件，如果不存在，则把文件拷贝到指定的文件夹。
+
+注释：这个例子把文件保存到了名为 "upload" 的新文件夹。
+
+
+
+
+
+php cookie
+
+
+什么是 Cookie？
+
+cookie 常用于识别用户。cookie 是服务器留在用户计算机中的小文件。每当相同的计算机通过浏览器请求页面时，它同时会发送 cookie。通过 PHP，您能够创建并取回 cookie 的值。
+如何创建 cookie？
+
+setcookie() 函数用于设置 cookie。
+
+注释：setcookie() 函数必须位于 <html> 标签之前。
+
+
+语法： setcookie(name,value,expire,path,domain);
+
+
+例子：在下面的例子中，我们将创建名为"user"的cookie，把它赋值"Alex Porter"。我们也规定了此cookie在一小时后过期：
+
+<?php
+setcookie("user","Alex Porter",time()+3600);
+?>
+
+<heml>
+
+<body>
+</body>
+
+</html>
+
+注释：在发送cookie时，cookie的值会自动进行URL编码，在取回时进行自动编码（为防止URL编码，请使用setrawcookie()取而代之）。
+
+如何取回Cookie的值？
+
+php的$_COOKIE变量用于取回cookie的值。
+
+在下面的例子中，我们取回了名为 "user" 的 cookie 的值，并把它显示在了页面上：
+
+<?php
+// Print a cookie
+echo $_COOKIE["user"];
+
+// A way to view all cookies
+print_r($_COOKIE);
+?>
+
+在下面的例子中，我们使用 isset() 函数来确认是否已设置了 cookie：
+
+<html>
+<body>
+
+<?php
+if (isset($_COOKIE["user"]))
+  echo "Welcome " . $_COOKIE["user"] . "!<br />";
+else
+  echo "Welcome guest!<br />";
+?>
+
+</body>
+</html>
+
+如何删除 cookie？
+
+当删除 cookie 时，您应当使过期日期变更为过去的时间点。
+
+删除的例子：
+
+<?php 
+// set the expiration date to one hour ago
+setcookie("user", "", time()-3600);
+?>
+
+如果浏览器不支持 cookie 该怎么办？
+
+如果您的应用程序涉及不支持 cookie 的浏览器，您就不得不采取其他方法在应用程序中从一张页面向另一张页面传递信息。一种方式是从表单传递数据（有关表单和用户输入的内容，稍早前我们已经在本教程中介绍过了）。
+
+下面的表单在用户单击提交按钮时向 "welcome.php" 提交了用户输入：
+
+<html>
+<body>
+
+<form action="welcome.php" method="post">
+Name: <input type="text" name="name" />
+Age: <input type="text" name="age" />
+<input type="submit" />
+</form>
+
+</body>
+</html>
+
+取回 "welcome.php" 中的值，就像这样：
+
+<html>
+<body>
+
+Welcome <?php echo $_POST["name"]; ?>.<br />
+You are <?php echo $_POST["age"]; ?> years old.
+
+</body>
+</html>
+
+
+
+
+php Sessions
+
+PHP session 变量用于存储有关用户会话的信息，或更改用户会话的设置。Session 变量保存的信息是单一用户的，并且可供应用程序中的所有页面使用。
+
+
+PHP Session 变量
+
+当您运行一个应用程序时，您会打开它，做些更改，然后关闭它。这很像一次会话。计算机清楚你是谁。它知道你何时启动应用程序，并在何时终止。但是在因特网上，存在一个问题：服务器不知道你是谁以及你做什么，这是由于 HTTP 地址不能维持状态。
+
+通过在服务器上存储用户信息以便随后使用，PHP session 解决了这个问题（比如用户名称、购买商品等）。不过，会话信息是临时的，在用户离开网站后将被删除。如果您需要永久储存信息，可以把数据存储在数据库中。
+
+Session 的工作机制是：为每个访问者创建一个唯一的 id (UID)，并基于这个 UID 来存储变量。UID 存储在 cookie 中，亦或通过 URL 进行传导。
+开始 PHP Session
+
+在您把用户信息存储到 PHP session 中之前，首先必须启动会话。
+
+注释：session_start() 函数必须位于 <html> 标签之前：
+
+<?php session_start(); ?>
+
+<html>
+<body>
+
+</body>
+</html>
+
+上面的代码会向服务器注册用户的会话，以便您可以开始保存用户信息，同时会为用户会话分配一个 UID。
+存储 Session 变量
+
+存储和取回 session 变量的正确方法是使用 PHP $_SESSION 变量：
+
+<?php
+session_start();
+// store session data
+$_SESSION['views']=1;
+?>
+
+<html>
+<body>
+
+<?php
+//retrieve session data
+echo "Pageviews=". $_SESSION['views'];
+?>
+
+</body>
+</html>
+
+输出：
+
+Pageviews=1
+
+在下面的例子中，我们创建了一个简单的 page-view 计数器。isset() 函数检测是否已设置 "views" 变量。如果已设置 "views" 变量，我们累加计数器。如果 "views" 不存在，则我们创建 "views" 变量，并把它设置为 1：
+
+<?php
+session_start();
+
+if(isset($_SESSION['views']))
+  $_SESSION['views']=$_SESSION['views']+1;
+
+else
+  $_SESSION['views']=1;
+echo "Views=". $_SESSION['views'];
+?>
+
+终结 Session
+
+如果您希望删除某些 session 数据，可以使用 unset() 或 session_destroy() 函数。
+
+unset() 函数用于释放指定的 session 变量：
+
+<?php
+unset($_SESSION['views']);
+?>
+
+您也可以通过 session_destroy() 函数彻底终结 session：
+
+<?php
+session_destroy();
+?>
+
+注释：session_destroy() 将重置 session，您将失去所有已存储的 session 数据。
+
+
+
+
+php发送电子邮件
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
